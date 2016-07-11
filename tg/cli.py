@@ -28,7 +28,7 @@ def main(game, token, debug):
     )
     game = import_module(game)
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(GameDispatcher(game.Game).run())
+    loop.run_until_complete(GameDispatcher(game.Game, api_token=token).run())
 
 
 if __name__ == "__main__":
