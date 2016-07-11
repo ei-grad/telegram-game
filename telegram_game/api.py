@@ -22,6 +22,14 @@ class BotAPI:
     API_URL = "https://api.telegram.org"
 
     def __init__(self, api_token, session=None):
+        """Create BotAPI instance.
+
+        :param str api_token:
+            bot API token, get it from http://telegram.me/BotFather
+
+        :param aiohttp.ClientSession session:
+            http session object to make requests to API
+        """
         self.api_token = api_token
         self._http = session or aiohttp.ClientSession()
         self._offset = None
@@ -63,11 +71,20 @@ class BotAPI:
             await asyncio.sleep(RETRY_TIMEOUT)
 
     def getMe(self):
+        """A simple method for testing your bot's auth token.
+
+        Requires no parameters.
+
+        :return: basic information about the bot in form of a User object.
+        """
         return self('getMe')
 
-    def sendMessage(self, chat_id, text, parse_mode=None,
-                    disable_web_page_preview=None, disable_notification=None,
-                    reply_to_message_id=None, reply_markup=None):
+    async def sendMessage(self, chat_id, text,
+                          parse_mode=None,
+                          disable_web_page_preview=None,
+                          disable_notification=None,
+                          reply_to_message_id=None,
+                          reply_markup=None):
         """Use this method to send text messages.
 
         :param int|str chat_id:
@@ -106,7 +123,7 @@ class BotAPI:
             params['reply_to_message_id'] = reply_to_message_id
         if reply_markup is not None:
             params['reply_markup'] = reply_markup
-        return self('sendMessage', **params)
+        return await self('sendMessage', **params)
 
     async def getUpdates(self, offset=None, limit=None, timeout=None):
         """Use this method to receive incoming updates using long polling
@@ -169,9 +186,12 @@ class Chat:
         self.api = api
         self.chat_id = chat_id
 
-    def sendMessage(self, text, parse_mode=None,
-                    disable_web_page_preview=None, disable_notification=None,
-                    reply_to_message_id=None, reply_markup=None):
+    async def sendMessage(self, text,
+                          parse_mode=None,
+                          disable_web_page_preview=None,
+                          disable_notification=None,
+                          reply_to_message_id=None,
+                          reply_markup=None):
         """Use this method to send text messages.
 
         :param str text: Text of the message to be sent
@@ -207,4 +227,4 @@ class Chat:
             params['reply_to_message_id'] = reply_to_message_id
         if reply_markup is not None:
             params['reply_markup'] = reply_markup
-        return self.api('sendMessage', **params)
+        return await self.api('sendMessage', **params)
