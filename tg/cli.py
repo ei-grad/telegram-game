@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from importlib import import_module
 import asyncio
 import os
@@ -27,3 +29,7 @@ def main(game, token, debug):
     game = import_module(game)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(GameDispatcher(game.Game).run())
+
+
+if __name__ == "__main__":
+    main()
