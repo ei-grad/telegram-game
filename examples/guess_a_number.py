@@ -1,7 +1,7 @@
 import logging
 import random
 
-from tg import fields, BaseGame, Messages
+from telegram_game import fields, BaseGame, Messages
 
 
 logger = logging.getLogger(__name__)

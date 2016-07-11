@@ -1,7 +1,7 @@
 import random
 
-from tg.api import Chat
-from tg.fields import Field
+from telegram_game.api import Chat
+from telegram_game.fields import Field
 
 
 class BaseGame:
@@ -9,8 +9,8 @@ class BaseGame:
 
     Each player works with his own Game() instance.
 
-    Use :py:mod:`tg.fields` to add a persistent attributes to Game, see
-    py:mod:`tg.examples`.
+    Use :py:mod:`telegram_game.fields` to add a persistent attributes to Game, see
+    py:mod:`telegram_game.examples`.
     """
 
     def __init__(self, chat_id, queue, api):

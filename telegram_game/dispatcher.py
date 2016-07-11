@@ -5,7 +5,7 @@ import aiohttp
 import logging
 import os
 
-from tg.api import BotAPI
+from telegram_game.api import BotAPI
 
 
 logger = logging.getLogger(__name__)

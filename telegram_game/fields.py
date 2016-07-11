@@ -15,14 +15,14 @@ class Field(object):
         self.initial = initial
 
     def get(self, obj, key):
-        ret = redis.get('tg:%s:%s' % (obj.chat_id, key))
+        ret = redis.get('telegram_game:%s:%s' % (obj.chat_id, key))
         if ret is None:
             ret = self.initial
             self.set(obj, key, ret)
         return ret
 
     def set(self, obj, key, value):
-        redis.set('tg:%s:%s' % (obj.chat_id, key), value)
+        redis.set('telegram_game:%s:%s' % (obj.chat_id, key), value)
         return value
 
 

@@ -7,7 +7,7 @@ import logging
 
 import click
 
-from tg.dispatcher import GameDispatcher
+from telegram_game.dispatcher import GameDispatcher
 
 
 @click.command()
@@ -20,7 +20,7 @@ def main(game, token, debug):
 
     Pass a game module name to it, for example:
 
-    > telegram-game tg.examples.quiz
+    > telegram-game telegram_game.examples.quiz
     """
     logging.basicConfig(
         level=logging.DEBUG if debug else logging.INFO,
