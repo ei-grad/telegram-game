@@ -1,3 +1,4 @@
 click
 aiohttp
 redis
+msgpack-python

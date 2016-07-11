@@ -1,7 +1,8 @@
 import logging
 import random
 
-from telegram_game import fields, BaseGame, Messages
+from telegram_game import Messages
+from telegram_game.redis_game import RedisGame, RedisField
 
 
 logger = logging.getLogger(__name__)
@@ -25,10 +26,10 @@ class M(Messages):
     SUCCESS = "You guessed! You guessed the number {0} times for {1} tries!"
 
 
-class Game(BaseGame):
+class Game(RedisGame):
 
-    guessed = fields.Integer(0)
-    tries = fields.Integer(0)
+    guessed = RedisField(0)
+    tries = RedisField(0)
 
     async def start(self):
 

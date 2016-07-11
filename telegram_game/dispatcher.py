@@ -65,9 +65,9 @@ class GameDispatcher():
                 except asyncio.QueueFull:
                     logger.warning('QueueFull for %s', chat_id)
                     self.loop.create_task(
-                        self.sendMessage(
-                            chat_id, 'Не так быстро!',
-                            reply_to_message_id=update['message']['id']
+                        self.api.sendMessage(
+                            chat_id, 'Not so fast!',
+                            reply_to_message_id=update['message']['message_id']
                         )
                     )
 
