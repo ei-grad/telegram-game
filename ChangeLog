@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+0.0.3
+-----
+
+* Add missing BaseGame.__call__
+* Add AUTHORS and ChangeLog
+
 0.0.2
 -----
 
