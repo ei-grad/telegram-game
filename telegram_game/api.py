@@ -125,6 +125,38 @@ class BotAPI:
             params['reply_markup'] = reply_markup
         return await self('sendMessage', **params)
 
+    async def sendChatAction(self, chat_id, action):
+        """Use this method when you need to tell the user that something is
+        happening on the bot's side. The status is set for 5 seconds or less
+        (when a message arrives from your bot, Telegram clients clear its typing
+        status).
+
+        .. note::
+
+            Example: The ImageBot needs some time to process a request and upload
+            the image. Instead of sending a text message along the lines of
+            “Retrieving image, please wait…”, the bot may use sendChatAction with
+            action = upload_photo. The user will see a “sending photo” status for
+            the bot.
+
+        We only recommend using this method when a response from the bot will
+        take a noticeable amount of time to arrive.
+
+        :param int|str chat_id:
+
+            Unique identifier for the target chat or username of the target
+            channel (in the format @channelusername)
+
+        :param str action:
+
+            Type of action to broadcast. Choose one, depending on what the user
+            is about to receive: `typing` for text messages, `upload_photo` for
+            photos, `record_video` or `upload_video` for videos, `record_audio`
+            or `upload_audio` for audio files, `upload_document` for general
+            files, `find_location` for location data.
+        """
+        return await self('sendChatAction', chat_id, action)
+
     async def getUpdates(self, offset=None, limit=None, timeout=None):
         """Use this method to receive incoming updates using long polling
         (`wiki`_).
@@ -228,3 +260,30 @@ class Chat:
         if reply_markup is not None:
             params['reply_markup'] = reply_markup
         return await self.api('sendMessage', **params)
+
+    async def sendChatAction(self, action):
+        """Use this method when you need to tell the user that something is
+        happening on the bot's side. The status is set for 5 seconds or less
+        (when a message arrives from your bot, Telegram clients clear its typing
+        status).
+
+        .. note::
+
+            Example: The ImageBot needs some time to process a request and upload
+            the image. Instead of sending a text message along the lines of
+            “Retrieving image, please wait…”, the bot may use sendChatAction with
+            action = upload_photo. The user will see a “sending photo” status for
+            the bot.
+
+        We only recommend using this method when a response from the bot will
+        take a noticeable amount of time to arrive.
+
+        :param str action:
+
+            Type of action to broadcast. Choose one, depending on what the user
+            is about to receive: `typing` for text messages, `upload_photo` for
+            photos, `record_video` or `upload_video` for videos, `record_audio`
+            or `upload_audio` for audio files, `upload_document` for general
+            files, `find_location` for location data.
+        """
+        return await self.api('sendChatAction', chat_id=self.chat_id, action=action)

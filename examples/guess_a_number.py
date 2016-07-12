@@ -1,5 +1,6 @@
 import logging
 import random
+import asyncio
 
 from telegram_game import Messages
 from telegram_game.redis_game import RedisGame, RedisField
@@ -24,6 +25,7 @@ class M(Messages):
         "Are you cheating?!",
     ]
     SUCCESS = "You guessed! You guessed the number {0} times for {1} tries!"
+    AGAIN = "Let's try again?"
 
 
 class Game(RedisGame):
@@ -33,29 +35,37 @@ class Game(RedisGame):
 
     async def start(self):
 
+        await self.chat.sendChatAction('typing')
+
+        await asyncio.sleep(4)
+
+        num = random.randint(1, 10)
+
+        await self.send(M.PREAMBLE)
+
         while True:
 
-            num = random.randint(1, 10)
+            msg = await self.recv()
 
-            await self.send(M.PREAMBLE)
+            try:
+                guess = int(msg['message']['text'])
+            except (KeyError, ValueError):
+                await self.send(M.BAD_INPUT)
+                continue
 
-            while True:
+            self.tries += 1
 
-                msg = await self.recv()
+            if guess == num:
+                self.guessed = self.guessed + 1
+                await self.send(M.SUCCESS, self.guessed, self.tries)
+                break
+            elif guess < num:
+                await self.send(M.GREATER)
+            else:
+                await self.send(M.LESS)
 
-                try:
-                    guess = int(msg['message']['text'])
-                except (KeyError, ValueError):
-                    await self.send(M.BAD_INPUT)
-                    continue
+        await self.chat.sendChatAction('typing')
 
-                self.tries += 1
+        await asyncio.sleep(2)
 
-                if guess == num:
-                    self.guessed = self.guessed + 1
-                    await self.send(M.SUCCESS, self.guessed, self.tries)
-                    break
-                elif guess < num:
-                    await self.send(M.GREATER)
-                else:
-                    await self.send(M.LESS)
+        await self.send(M.AGAIN)

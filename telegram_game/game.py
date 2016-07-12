@@ -20,15 +20,16 @@ class BaseGame:
         self.queue = queue
         self.api = api
         self.chat = Chat(api, chat_id)
+        self.restart_timeout = 5
 
     async def __call__(self):
         while True:
             try:
                 await self.start()
             except:
-                logger.error("%s.start() raised exception, restarting in 1s",
-                             self, exc_info=True)
-                await asyncio.sleep(1)
+                logger.error("%s.start() raised exception, restarting in %ss",
+                             self, self.restart_timeout, exc_info=True)
+                await asyncio.sleep(self.restart_timeout)
 
     def __str__(self):
         return 'Game(chat_id={})'.format(self.chat_id)
