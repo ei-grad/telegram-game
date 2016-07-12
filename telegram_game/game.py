@@ -1,6 +1,12 @@
 import random
+import logging
+
+import asyncio
 
 from telegram_game.api import Chat
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseGame:
@@ -14,6 +20,18 @@ class BaseGame:
         self.queue = queue
         self.api = api
         self.chat = Chat(api, chat_id)
+
+    async def __call__(self):
+        while True:
+            try:
+                await self.start()
+            except:
+                logger.error("%s.start() raised exception, restarting in 1s",
+                             self, exc_info=True)
+                await asyncio.sleep(1)
+
+    def __str__(self):
+        return 'Game(chat_id={})'.format(self.chat_id)
 
     @classmethod
     async def prepare(self, loop):
