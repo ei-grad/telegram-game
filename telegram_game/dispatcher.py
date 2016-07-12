@@ -41,35 +41,39 @@ class GameDispatcher():
     async def poll_get_updates(self):
         while True:
             updates = await self.api.getUpdates(timeout=30.)
-            self.loop.create_task(self.dispatch_updates(updates))
+            for i in updates:
+                self.loop.create_task(self.dispatch_update(i))
 
-    async def dispatch_updates(self, updates):
+    async def dispatch_update(self, update):
 
-        for update in updates:
+        if 'message' in update:
 
-            if 'message' in update:
+            chat_id = update['message']['chat']['id']
+            msg = update['message']
+            logger.info('#%d @%s: %s', chat_id,
+                        msg.get('from', {}).get('username'),
+                        msg.get('text', 'NO_TEXT')[:60].replace('\n', '\\n'))
 
-                chat_id = update['message']['chat']['id']
-                msg = update['message']
-                logger.info('#%d @%s: %s', chat_id,
-                            msg.get('from', {}).get('username'),
-                            msg.get('text', 'NO_TEXT')[:60].replace('\n', '\\n'))
+            if chat_id not in self.queues:
+                queue = asyncio.Queue(self.queue_maxsize)
+                self.queues[chat_id] = queue
+                game = self.game_class(
+                    chat_id,
+                    queue,
+                    self.api
+                )
+                self.loop.create_task(game())
 
-                if chat_id not in self.queues:
-                    self.queues[chat_id] = asyncio.Queue(self.queue_maxsize)
-                    game = self.game_class(chat_id, self.queues[chat_id], self.api)
-                    self.loop.create_task(game.start())
-
-                try:
-                    self.queues[chat_id].put_nowait(update)
-                except asyncio.QueueFull:
-                    logger.warning('QueueFull for %s', chat_id)
-                    self.loop.create_task(
-                        self.api.sendMessage(
-                            chat_id, 'Not so fast!',
-                            reply_to_message_id=update['message']['message_id']
-                        )
+            try:
+                self.queues[chat_id].put_nowait(update)
+            except asyncio.QueueFull:
+                logger.warning('QueueFull for %s', chat_id)
+                self.loop.create_task(
+                    self.api.sendMessage(
+                        chat_id, 'Not so fast!',
+                        reply_to_message_id=update['message']['message_id']
                     )
+                )
 
-            else:
-                logger.warning("Unsupported update type: %s", update)
+        else:
+            logger.warning("Unsupported update type: %s", update)
