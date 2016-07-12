@@ -1,0 +1,17 @@
+CHANGES
+=======
+
+0.0.2
+-----
+
+* Improve style and docs
+* Split dispatch_updates to coroutine per update
+* Replace telegram_game.fields logic by RedisGame
+* Rename tg package to telegram_game
+* Pass token to GameDispatcher
+* Run example bot on Heroku
+
+0.0.1
+-----
+
+* It works!
