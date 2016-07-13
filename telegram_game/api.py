@@ -1,5 +1,6 @@
 """Telegram API implementation."""
 
+import json
 import asyncio
 import aiohttp
 import logging
@@ -47,10 +48,15 @@ class BotAPI:
 
         while True:
 
-            async with self._http.post(url, data=params) as response:
+            async with self._http.post(
+                url,
+                data=json.dumps(params),
+                headers={'content-type': 'application/json'}
+            ) as response:
 
                 if response.status == 200:
                     data = await response.json()
+                    logger.debug("%s response: %s", method, data)
                     if data['ok']:
                         return data['result']
                     else:

@@ -1,4 +1,3 @@
-import random
 import logging
 
 import asyncio
@@ -27,9 +26,9 @@ class BaseGame:
             try:
                 await self.start()
             except:
-                logger.error("%s.start() raised exception, restarting in %ss",
-                             self, self.restart_timeout, exc_info=True)
-                await asyncio.sleep(self.restart_timeout)
+                logger.error("%s.start() raised exception, restarting in 1m",
+                             self, exc_info=True)
+                await asyncio.sleep(60)
 
     def __str__(self):
         return 'Game(chat_id={})'.format(self.chat_id)
@@ -44,9 +43,7 @@ class BaseGame:
         pass
 
     async def send(self, msg, *args, **kwargs):
-        if isinstance(msg, list):
-            msg = random.choice(msg)
-        return await self.chat.sendMessage(msg.format(*args, **kwargs))
+        return await self.chat.sendMessage(msg, *args, **kwargs)
 
     async def recv(self):
         """Get the next message from player."""

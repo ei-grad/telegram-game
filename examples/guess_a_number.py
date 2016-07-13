@@ -21,9 +21,7 @@ class M(Messages):
         "No.",
         "Too low!",
     ]
-    BAD_INPUT = [
-        "Are you cheating?!",
-    ]
+    BAD_INPUT = "Are you cheating?!",
     SUCCESS = "You guessed! You guessed the number {0} times for {1} tries!"
     AGAIN = "Let's try again?"
 
@@ -63,12 +61,12 @@ class Game(RedisGame):
 
             if guess == num:
                 self.guessed = self.guessed + 1
-                await self.send(M.SUCCESS, self.guessed, self.tries)
+                await self.send(M.SUCCESS.format(self.guessed, self.tries))
                 break
             elif guess < num:
-                await self.send(M.GREATER, reply_markup=KEYBOARD)
+                await self.send(random.choice(M.GREATER), reply_markup=KEYBOARD)
             else:
-                await self.send(M.LESS, reply_markup=KEYBOARD)
+                await self.send(random.choice(M.LESS), reply_markup=KEYBOARD)
 
         await self.chat.sendChatAction('typing')
 
