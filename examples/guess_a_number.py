@@ -28,6 +28,12 @@ class M(Messages):
     AGAIN = "Let's try again?"
 
 
+KEYBOARD = {
+    'keyboard': [['1', '2', '3', '4', '5'],
+                 ['6', '7', '8', '9', '10']]
+}
+
+
 class Game(RedisGame):
 
     guessed = RedisField(0)
@@ -41,7 +47,7 @@ class Game(RedisGame):
 
         num = random.randint(1, 10)
 
-        await self.send(M.PREAMBLE)
+        await self.send(M.PREAMBLE, reply_markup=KEYBOARD)
 
         while True:
 
@@ -60,9 +66,9 @@ class Game(RedisGame):
                 await self.send(M.SUCCESS, self.guessed, self.tries)
                 break
             elif guess < num:
-                await self.send(M.GREATER)
+                await self.send(M.GREATER, reply_markup=KEYBOARD)
             else:
-                await self.send(M.LESS)
+                await self.send(M.LESS, reply_markup=KEYBOARD)
 
         await self.chat.sendChatAction('typing')
 
